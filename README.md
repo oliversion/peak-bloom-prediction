@@ -1,5 +1,6 @@
 # Cherry Blossom Peak Bloom Prediction 
-##SFU Team:
+
+## SFU Team:
 
 - Olga Vishnyakova
 - Renny Doig
