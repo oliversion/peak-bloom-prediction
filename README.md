@@ -7,7 +7,6 @@
 - Wendy Wang
 
 ## Competition rules
-
 - Predictions and the URL pointing to your repository must be submitted via https://competition.statistics.gmu.edu.
 - Entries must be submitted by the end of February 28, 2023 (anywhere on earth)**.
 - The predictions are judged based on the sum of the absolute differences between your predicted peak bloom dates and the publicly posted peak bloom dates:
