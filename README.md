@@ -5,7 +5,6 @@
 - Olga Vishnyakova
 - Renny Doig
 - Wendy Wang
-- Zhi Yuh Ou Yang
 
 ## Competition rules
 
