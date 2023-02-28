@@ -1,19 +1,22 @@
-# Cherry Blossom Peak Bloom Prediction 
+# 2023 BLOOM PEAK COMPETITION
 
-## SFU Team:
+## SUMMARY:
 
-- Olga Vishnyakova
-- Renny Doig
-- Wendy Wang
+In recent years changes in climate have caused shifts in the bloom cycles of cherry tree blossoms in multiple locations across the world. Accurate short-term forecasting of bloom dates is possible, but satisfactory prediction of the date of cherry blossom blooms in the long-term is not available. We propose an ensemble of predictions from seven models. The best predictors were the tree-based models: gradient boosting, extreme gradient boosting (XGBoost), light gradient boosting (LGBM), and boosting with categorical features (CatBoost). Also tried were regression models based on kernel smoothing: support vector regression (SVR) and kernel ridge regression (KRR). Predictions are estimated based on previous bloom dates from Kyoto, Japan; Liestal-Weideli, Switzerland; Washington, D.C., USA; and Vancouver, Canada along with temperature and precipitation data obtained for each of the four locations. In addition to predictions of bloom dates, we used variable importance measures from the tuned tree-based models to identify the ten most important features in predicting bloom dates.
+ 
+## OBJECTIVE:
 
-## Competition rules
-- Predictions and the URL pointing to your repository must be submitted via https://competition.statistics.gmu.edu.
-- Entries must be submitted by the end of February 28, 2023 (anywhere on earth)**.
-- The predictions are judged based on the sum of the absolute differences between your predicted peak bloom dates and the publicly posted peak bloom dates:
+Predict the peak bloom date of cherry trees at four distinct locations: Kyoto (Japan), Liestal_weideli (Switzerland), Washington, D.C. (USA), and Vancouver (Canada) in the next decade. 
 
-```
-| predicted_bloom_date_kyoto_2023 - actual_bloom_date_kyoto_2023 | +
-  | predicted_bloom_date_washingtondc_2023 - actual_bloom_date_washingtondc_2023 | +
-  | predicted_bloom_date_liestal_2023 - actual_bloom_date_liestal_2023 | +
-  | predicted_bloom_date_vancouver_2023 - actual_bloom_date_vancouver_2023 |
-```
+## METHODS:
+
+The method choice was made based on data availability. Since we have only one observation for Vancouver, the model should consider geographic location and climate information. Data do not contain a type of cherry tree at each site. Thus to have as much data as possible to train the model, we combined observations from all locations, including South Korea, and restricted the range of features to the location (without phenometrics information). Location information was extended with monthly meteorological data: average temperature, min t, max t, precipitation total in mm (48 additional features ) using meteostat python library to get access to publicly-available meteorological data. Replacement of climate missing values was done column-wise and  in two steps: (step1) replace NAs with mean across years at the same location; (step2) replace NAs with mean across all locations.
+The primary approach is to consider a bloom peak prediction as a regression task. The model selection was made by comparing performance of the following regressors on a validation set: gradient boosting, ElasticNet, SVR, CatBoost, KRR, XGBoost, LGBM. We used randomly selected three years from 1950 to 2022 as a validation set and mean absolute distance as a performance metric. Parameters of each model were tuned using grid search and 5-fold cross validation. To make a prediction for the next decade, we forecasted meteorological data for the next ten years using Seasonal AutoRegressive Integrated Moving Average with eXogenous regressors model (SARIMAX). Other approaches include utilizing location-wise ARIMA models and reformulating a problem as a classification task. For the latter, daily climate data are used to characterize each day at least a week in advance before the bloom peak day. This approach assumes assigning a class label for each day: more than a week before blooming, a week before, 6 days, 5 days, 4 days, 3 days, 2 days, 1 day, and a bloom peak day. Details can be found in Appx notebooks. 
+
+## RESULTS:
+
+By comparing performance of regressors on a validation set, we found that gradient boosting, CatBoost, and XGBoost were better in predicting bloom peak days than the other four regressors in terms of mean absolute error. Specifically, we used the following years as a validation set: 1970, 1979, and 2020. Moreover, the prediction error of the ensemble was lower than that of either constituent model. We utilized this ensemble mode to predict the peak bloom date for each year of the next decade (2023 to 2032) at four locations. In addition, we conducted a feature analysis and identified the top 10 most important features to our regression model, in order of importance: (1) latitude, (2) average temperature in March, (3) average temperature in April, (4) maximum temperature in April, (5) maximum temperature in March, (6) average temperature in February, (7) year, (8) longitude, (9) altitude , (10) average temperature in May. It is noteworthy that precipitation information did not appear among the top 20 important features. Overall, our results suggest that the ensemble of gradient boosting, CatBoost, and XGBoost is effective in predicting peak bloom date in cherry trees, as it captures the non-linear patterns and is less sensitive to outliers. Moreover, using the ensemble model allowed us to gain insight into the most important features in our model. Regarding other approaches, our classification models tend to predict the null class. We did not train classifiers other than random forest and gradient boosting due to a lack of time while the approach looked promising. We were unable to tune parameters for the same reason. ARIMA models tend to predict the mean of the dataset regardless of the global warming trend. 
+
+## CONCLUSIONS:
+
+Our ensemble model trained on location and climate data was  able to predict bloom peak day using even though only a single observation was available for Vancouver. Long-term weather forecasting is an extremely challenging task. This resulted in almost constant prediction for selected locations. We believe that model performance might be improved by extending climate data, advanced models for long-term forecasting and using phenometrics provided by USA-NPN to incorporate species type in the model.
